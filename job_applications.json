@@ -1,0 +1,13 @@
+[
+    {
+        "date_applied": "2026-05-15",
+        "company": "Lockheed Martin",
+        "title": "Embedded Software Engineer",
+        "salary": "75000",
+        "location": "Orlando, FL",
+        "status": "waiting",
+        "link": "https://example.com/job",
+        "resume": "embedded resume",
+        "notes": "Entry level role, matches C, hardware, and defense experience."
+    }
+]
