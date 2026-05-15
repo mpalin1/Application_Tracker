@@ -124,6 +124,8 @@ HTML = """
         --shadow: rgba(0,0,0,0.35);
     }
 
+	
+
     body {
         font-family: Arial, sans-serif;
         background: var(--bg);
@@ -215,6 +217,27 @@ HTML = """
         border-collapse: collapse;
         background: var(--card);
         color: var(--text);
+    }
+
+    body.dark-mode tr.date-group-even td {
+        background: #15191a;
+    }
+
+    body.dark-mode tr.date-group-odd td {
+        background: #202526;
+    }
+
+    body:not(.dark-mode) tr.date-group-even td {
+        background: #ffffff;
+    }
+
+    body:not(.dark-mode) tr.date-group-odd td {
+        background: #eef2f7;
+    }
+
+    tr.date-group-even td,
+    tr.date-group-odd td {
+        transition: background 0.2s ease;
     }
 
     th, td {
@@ -355,7 +378,7 @@ notes: Entry level role."></textarea>
                 </tr>
 
                 {% for job in jobs %}
-                <tr>
+                <tr class="{{ job.date_group_class }}">
                     <td>{{ job.date_applied }}</td>
                     <td>{{ job.company }}</td>
                                         <td>
@@ -486,6 +509,21 @@ def home():
         ]
 
     jobs.sort(key=lambda x: x.get("date_applied", ""))
+
+    current_date = None
+    group_number = -1
+
+    for job in jobs:
+        job_date = job.get("date_applied", "")
+
+        if job_date != current_date:
+            current_date = job_date
+            group_number += 1
+
+        if group_number % 2 == 0:
+            job["date_group_class"] = "date-group-even"
+        else:
+            job["date_group_class"] = "date-group-odd"
 
     return render_template_string(
         HTML,
