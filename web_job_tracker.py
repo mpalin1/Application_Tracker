@@ -94,98 +94,216 @@ HTML = """
 <head>
     <title>Job Application Tracker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 20px;
-        }
+    :root {
+        --bg: #f4f6f8;
+        --card: #ffffff;
+        --text: #111827;
+        --muted: #555;
+        --border: #ddd;
+        --table-header: #e5e7eb;
+        --input-bg: #ffffff;
+        --input-text: #111827;
+        --button-blue: #2563eb;
+        --button-red: #dc2626;
+        --button-green: #059669;
+        --shadow: rgba(0,0,0,0.12);
+    }
 
-        h1 {
-            text-align: center;
-        }
+    body.dark-mode {
+        --bg: #1c1f20;
+        --card: #171a1b;
+        --text: #f3f4f6;
+        --muted: #c7c7c7;
+        --border: #33383b;
+        --table-header: #25292b;
+        --input-bg: #3a3a3a;
+        --input-text: #f3f4f6;
+        --button-blue: #0f4fc4;
+        --button-red: #b91c1c;
+        --button-green: #047857;
+        --shadow: rgba(0,0,0,0.35);
+    }
 
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 20px;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+    }
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        }
+    h1 {
+        text-align: center;
+        font-size: 34px;
+        margin-bottom: 25px;
+    }
 
-        textarea {
-            width: 100%;
-            height: 330px;
-            font-family: Consolas, monospace;
-            font-size: 14px;
-        }
+    h2 {
+        margin-top: 0;
+    }
 
-        input, select, button {
-            padding: 8px;
-            margin: 4px 0;
-        }
+    .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
-        button {
-            cursor: pointer;
-            border: none;
-            border-radius: 6px;
-            background: #2563eb;
-            color: white;
-        }
+.theme-toggle {
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--text);
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    box-shadow: 0 2px 8px var(--shadow);
+    border: 1px solid var(--border);
+}
 
-        button.delete {
-            background: #dc2626;
-        }
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 20px;
+    }
 
-        button.export {
-            background: #059669;
-        }
+    .card {
+        background: var(--card);
+        color: var(--text);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px var(--shadow);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
+    textarea {
+        width: 100%;
+        height: 330px;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        background: var(--input-bg);
+        color: var(--input-text);
+        border: 1px solid var(--border);
+    }
 
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            font-size: 14px;
-        }
+    input, select, button {
+        padding: 8px;
+        margin: 4px 0;
+        background: var(--input-bg);
+        color: var(--input-text);
+        border: 1px solid var(--border);
+    }
 
-        th {
-            background: #e5e7eb;
-        }
+    button {
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        background: var(--button-blue);
+        color: white;
+    }
 
-        .search-box {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
+    button.delete {
+        background: var(--button-red);
+    }
 
-        .search-box input {
-            flex: 1;
-        }
+    button.export {
+        background: var(--button-green);
+    }
 
-        .small-text {
-            color: #555;
-            font-size: 13px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+        color: var(--text);
+    }
 
-        .status {
-            font-weight: bold;
-        }
-    </style>
+    th, td {
+        border-bottom: 1px solid var(--border);
+        padding: 8px;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    th {
+        background: var(--table-header);
+    }
+
+    a {
+        color: #3b82f6;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .search-box input {
+        flex: 1;
+    }
+
+    .small-text {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .title-link {
+        color: #3b82f6;
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 14px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.65);
+    }
+
+    .modal-content {
+        background: var(--card);
+        color: var(--text);
+        margin: 8% auto;
+        padding: 20px;
+        border-radius: 12px;
+        width: 55%;
+        box-shadow: 0 4px 12px var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .close {
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .detail-line {
+        margin: 8px 0;
+    }
+</style>
 </head>
 
-<body>
+<body class="dark-mode">
     <h1>Job Application Tracker</h1>
+
+    <div class="top-bar">
+    <button id="themeButton" class="theme-toggle" type="button" onclick="toggleTheme()" title="Toggle theme">
+        🌙
+    </button>
+</div>
 
     <div class="container">
         <div class="card">
@@ -240,14 +358,35 @@ notes: Entry level role."></textarea>
                 <tr>
                     <td>{{ job.date_applied }}</td>
                     <td>{{ job.company }}</td>
-                    <td>
-                        {% if job.link %}
-                            <a href="{{ job.link }}" target="_blank">{{ job.title }}</a>
-                        {% else %}
+                                        <td>
+                        <button class="title-link" type="button" onclick="openModal('modal-{{ loop.index0 }}')">
                             {{ job.title }}
-                        {% endif %}
-                        <br>
-                        <span class="small-text">{{ job.notes }}</span>
+                        </button>
+
+                        <div id="modal-{{ loop.index0 }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('modal-{{ loop.index0 }}')">&times;</span>
+
+                                <h2>{{ job.title }}</h2>
+
+                                <p class="detail-line"><strong>Date Applied:</strong> {{ job.date_applied }}</p>
+                                <p class="detail-line"><strong>Company:</strong> {{ job.company }}</p>
+                                <p class="detail-line"><strong>Salary:</strong> {{ job.salary }}</p>
+                                <p class="detail-line"><strong>Location:</strong> {{ job.location }}</p>
+                                <p class="detail-line"><strong>Status:</strong> {{ job.status }}</p>
+                                <p class="detail-line"><strong>Resume Used:</strong> {{ job.resume }}</p>
+
+                                {% if job.link %}
+                                    <p class="detail-line">
+                                        <strong>Job Link:</strong>
+                                        <a href="{{ job.link }}" target="_blank">Open job posting</a>
+                                    </p>
+                                {% endif %}
+
+                                <p class="detail-line"><strong>Notes:</strong></p>
+                                <p>{{ job.notes }}</p>
+                            </div>
+                        </div>
                     </td>
                     <td>{{ job.salary }}</td>
                     <td>{{ job.location }}</td>
@@ -274,6 +413,61 @@ notes: Entry level role."></textarea>
             </table>
         </div>
     </div>
+    <script>
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    function updateThemeButton() {
+    let themeButton = document.getElementById("themeButton");
+
+    if (document.body.classList.contains("dark-mode")) {
+        themeButton.textContent = "☀️";
+        themeButton.title = "Switch to light mode";
+    } else {
+        themeButton.textContent = "🌙";
+        themeButton.title = "Switch to dark mode";
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+
+    updateThemeButton();
+}
+
+window.onload = function() {
+    let savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+        document.body.classList.remove("dark-mode");
+    } else {
+        document.body.classList.add("dark-mode");
+    }
+
+    updateThemeButton();
+};
+
+    window.onclick = function(event) {
+        let modals = document.getElementsByClassName("modal");
+
+        for (let i = 0; i < modals.length; i++) {
+            if (event.target === modals[i]) {
+                modals[i].style.display = "none";
+            }
+        }
+    };
+</script>
 </body>
 </html>
 """
