@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .venv/
+
+*.json
+job_applications_report.txt
