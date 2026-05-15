@@ -1,13 +1,57 @@
 [
     {
+        "date_applied": "2026-05-14",
+        "company": "Northrop Grumman",
+        "title": "Associate Software Engineer",
+        "salary": "80000",
+        "location": "Orlando, FL",
+        "status": "waiting",
+        "link": "https://example.com/northrop-software",
+        "resume": "defense aerospace resume",
+        "notes": "Test application for C, Python, software development, defense systems, and engineering documentation."
+    },
+    {
         "date_applied": "2026-05-15",
         "company": "Lockheed Martin",
         "title": "Embedded Software Engineer",
-        "salary": "75000",
+        "salary": "78000",
         "location": "Orlando, FL",
         "status": "waiting",
-        "link": "https://example.com/job",
+        "link": "https://example.com/lockheed-embedded",
         "resume": "embedded resume",
-        "notes": "Entry level role, matches C, hardware, and defense experience."
+        "notes": "Test application for embedded C, microcontrollers, hardware troubleshooting, and defense systems."
+    },
+    {
+        "date_applied": "2026-05-16",
+        "company": "L3Harris Technologies",
+        "title": "Systems Integration Engineer",
+        "salary": "82000",
+        "location": "Melbourne, FL",
+        "status": "applied",
+        "link": "https://example.com/l3harris-systems",
+        "resume": "defense aerospace resume",
+        "notes": "Test application for systems integration, avionics, troubleshooting, and Navy aviation electrical experience."
+    },
+    {
+        "date_applied": "2026-05-17",
+        "company": "Siemens",
+        "title": "Entry Level Software Engineer",
+        "salary": "74000",
+        "location": "Orlando, FL",
+        "status": "interview",
+        "link": "https://example.com/siemens-software",
+        "resume": "general computer engineering resume",
+        "notes": "Test application for Python, Java, databases, software development, and engineering problem solving."
+    },
+    {
+        "date_applied": "2026-05-19",
+        "company": "Boeing",
+        "title": "Test Engineer",
+        "salary": "76000",
+        "location": "Titusville, FL",
+        "status": "applied",
+        "link": "https://example.com/boeing-test-engineer",
+        "resume": "general computer engineering resume",
+        "notes": "Test application for hardware testing, troubleshooting, electrical systems, and technical reporting."
     }
 ]
