@@ -1,0 +1,58 @@
+{
+  "first_name": "",
+  "middle_name": "",
+  "last_name": "",
+  "full_name": "",
+
+  "email": "",
+  "phone": "",
+  "phone_type": "Mobile",
+  "country_phone_code": "United States of America (+1)",
+
+  "address": "",
+  "city": "",
+  "state": "",
+  "zip": "",
+  "country": "United States of America",
+
+  "citizenship": "",
+  "work_authorization": "",
+  "sponsorship": "",
+  "previously_employed_by_company": "",
+
+  "degree": "",
+  "degree_short": "",
+  "school": "",
+  "field_of_study": "",
+  "graduation_date": "",
+  "gpa": "",
+  "track": "",
+
+  "linkedin": "",
+  "github": "",
+
+  "resume_file": "",
+
+  "skills": "",
+
+  "work_experience_1_title": "",
+  "work_experience_1_company": "",
+  "work_experience_1_location": "",
+  "work_experience_1_from": "",
+  "work_experience_1_to": "",
+  "work_experience_1_description": "",
+
+  "work_experience_2_title": "",
+  "work_experience_2_company": "",
+  "work_experience_2_location": "",
+  "work_experience_2_from": "",
+  "work_experience_2_to": "",
+  "work_experience_2_description": "",
+
+  "work_experience_3_title": "",
+  "work_experience_3_company": "",
+  "work_experience_3_location": "",
+  "work_experience_3_from": "",
+  "work_experience_3_to": "",
+  "work_experience_3_description": ""
+}
