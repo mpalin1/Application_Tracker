@@ -1,56 +1,27 @@
 # Application Tracker
 
-A Python job application tracking tool that helps organize job applications during the job search process.
+Application Tracker is a Python-based job application helper that helps organize job applications and speed up repetitive application form filling.
 
-The project includes both a terminal version and a web browser version.
+The project includes a local job tracker, an autofill profile system, and a simple web-based tracker option.
 
 ## Features
 
-- Add job applications using one pasted text block
-- Save application data locally
-- Search applications by company or job title
-- Update application status
-- Export a TXT report
-- Web interface that opens in Google Chrome
-- Job details pop-up when clicking the job title
-- Light mode / dark mode toggle
+- Track job applications in one place
+- Store reusable application information in a JSON profile
+- Autofill common job application fields
+- Keep track of companies, job titles, links, dates, and application status
+- Use a web-based tracker interface
+- Maintain a local resume/profile setup for faster applications
 
-## Application Fields
-
-Each application can include:
-
-- Date applied
-- Company name
-- Job title
-- Salary
-- Location
-- Status
-- Job link
-- Resume used
-- Notes
-
-## Status Options
-
-- interested
-- applied
-- waiting
-- interview
-- rejected
-- offer
-- no response
-- closed
-
-## Example Input
-
-Paste the job application using this format:
+## Project Files
 
 ```text
-date applied: 2026-05-15
-company: Lockheed Martin
-title: Embedded Software Engineer
-salary: 78000
-location: Orlando, FL
-status: waiting
-link: https://example.com/job
-resume: embedded resume
-notes: Entry level role, matches C, hardware, and defense experience.
+Application_Tracker/
+│
+├── autofill_job_application.py   # Script for autofilling job application fields
+├── autofill_profile.json         # Local profile data used by the autofill script
+├── job_tracker.py                # Main job tracker program
+├── web_job_tracker.py            # Web-based job tracker version
+├── requirements.txt              # Python package requirements
+├── README.md                     # Project documentation
+└── .gitignore                    # Files that should not be uploaded to GitHub
