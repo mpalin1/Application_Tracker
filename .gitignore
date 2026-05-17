@@ -4,3 +4,6 @@ __pycache__/
 
 *.json
 job_applications_report.txt
+
+autofill_profile.json
+playwright_chrome_profile/
