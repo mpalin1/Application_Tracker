@@ -8,14 +8,9 @@ app = Flask(__name__)
 DATA_FILE = "job_applications.json"
 
 VALID_STATUSES = [
-    "interested",
     "applied",
-    "waiting",
-    "interview",
-    "rejected",
-    "offer",
-    "no response",
-    "closed"
+    "denied",
+    "accepted"
 ]
 
 
@@ -42,7 +37,7 @@ def parse_application(text):
         "title": "",
         "salary": "",
         "location": "",
-        "status": "waiting",
+        "status": "applied",
         "link": "",
         "resume": "",
         "notes": ""
@@ -83,7 +78,7 @@ def parse_application(text):
     job["status"] = job["status"].lower()
 
     if job["status"] not in VALID_STATUSES:
-        job["status"] = "waiting"
+        job["status"] = "applied"
 
     return job
 
@@ -235,8 +230,43 @@ HTML = """
         background: #eef2f7;
     }
 
+    /* Status row colors */
+    body:not(.dark-mode) tr.status-denied.date-group-even td {
+        background: #fee2e2;
+    }
+
+    body:not(.dark-mode) tr.status-denied.date-group-odd td {
+        background: #fecaca;
+    }
+
+    body.dark-mode tr.status-denied.date-group-even td {
+        background: #2a1414;
+    }
+
+    body.dark-mode tr.status-denied.date-group-odd td {
+        background: #3a1717;
+    }
+
+    body:not(.dark-mode) tr.status-accepted.date-group-even td {
+        background: #dcfce7;
+    }
+
+    body:not(.dark-mode) tr.status-accepted.date-group-odd td {
+        background: #bbf7d0;
+    }
+
+    body.dark-mode tr.status-accepted.date-group-even td {
+        background: #102416;
+    }
+
+    body.dark-mode tr.status-accepted.date-group-odd td {
+        background: #15351f;
+    }
+
     tr.date-group-even td,
-    tr.date-group-odd td {
+    tr.date-group-odd td,
+    tr.status-denied td,
+    tr.status-accepted td {
         transition: background 0.2s ease;
     }
 
@@ -272,6 +302,27 @@ HTML = """
 
     .status {
         font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        color: white;
+        font-size: 13px;
+    }
+
+    .status-pill.applied {
+        background: var(--button-blue);
+    }
+
+    .status-pill.denied {
+        background: var(--button-red);
+    }
+
+    .status-pill.accepted {
+        background: var(--button-green);
     }
 
     .title-link {
@@ -340,7 +391,7 @@ company: Lockheed Martin
 title: Embedded Software Engineer
 salary: 75000
 location: Orlando, FL
-status: waiting
+status: applied
 link: https://example.com/job
 resume: embedded resume
 notes: Entry level role."></textarea>
@@ -378,7 +429,7 @@ notes: Entry level role."></textarea>
                 </tr>
 
                 {% for job in jobs %}
-                <tr class="{{ job.date_group_class }}">
+                <tr class="{{ job.date_group_class }} {{ job.status_class }}">
                     <td>{{ job.date_applied }}</td>
                     <td>{{ job.company }}</td>
                                         <td>
@@ -413,7 +464,7 @@ notes: Entry level role."></textarea>
                     </td>
                     <td>{{ job.salary }}</td>
                     <td>{{ job.location }}</td>
-                    <td class="status">{{ job.status }}</td>
+                    <td class="status"><span class="status-pill {{ job.status }}">{{ job.status }}</span></td>
                     <td>
                         <form method="POST" action="/update/{{ loop.index0 }}">
                             <select name="status">
@@ -519,6 +570,11 @@ def home():
         if job_date != current_date:
             current_date = job_date
             group_number += 1
+
+        if job.get("status", "") not in VALID_STATUSES:
+            job["status"] = "applied"
+
+        job["status_class"] = f"status-{job.get('status', 'applied')}"
 
         if group_number % 2 == 0:
             job["date_group_class"] = "date-group-even"
