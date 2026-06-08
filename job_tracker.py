@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 DATA_FILE = "job_applications.json"
+META_FILE = "job_tracker_meta.json"
 
 VALID_STATUSES = [
     "interested",
@@ -27,6 +28,75 @@ def load_jobs():
 def save_jobs(jobs):
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(jobs, file, indent=4)
+
+
+def load_meta():
+    if not os.path.exists(META_FILE):
+        return {"untracked_applied": 0}
+
+    with open(META_FILE, "r", encoding="utf-8") as file:
+        meta = json.load(file)
+
+    if "untracked_applied" not in meta:
+        meta["untracked_applied"] = 0
+
+    return meta
+
+
+def save_meta(meta):
+    with open(META_FILE, "w", encoding="utf-8") as file:
+        json.dump(meta, file, indent=4)
+
+
+def get_application_counts():
+    jobs = load_jobs()
+    meta = load_meta()
+
+    tracked_total = len(jobs)
+    untracked_total = meta.get("untracked_applied", 0)
+    total_applied = tracked_total + untracked_total
+    denied_total = sum(1 for job in jobs if job.get("status", "").lower() in ["rejected", "denied"])
+
+    return tracked_total, untracked_total, total_applied, denied_total
+
+
+def view_application_summary():
+    tracked_total, untracked_total, total_applied, denied_total = get_application_counts()
+
+    print("\n==== Saved Applications Summary ====")
+    print(f"Tracked applications: {tracked_total}")
+    print(f"Untracked applied count: {untracked_total}")
+    print(f"Total applications: {total_applied}")
+    print(f"Denied/rejected: {denied_total}")
+
+
+def update_untracked_applied_count():
+    meta = load_meta()
+
+    while True:
+        current_count = meta.get("untracked_applied", 0)
+        print("\n==== Untracked Applied Counter ====")
+        print(f"Current untracked count: {current_count}")
+        print("+  Increase by 1")
+        print("-  Decrease by 1")
+        print("0  Reset to 0")
+        print("b  Back to main menu")
+
+        choice = input("\nChoose +, -, 0, or b: ").strip().lower()
+
+        if choice == "+":
+            meta["untracked_applied"] = current_count + 1
+            save_meta(meta)
+        elif choice == "-":
+            meta["untracked_applied"] = max(0, current_count - 1)
+            save_meta(meta)
+        elif choice == "0":
+            meta["untracked_applied"] = 0
+            save_meta(meta)
+        elif choice == "b":
+            break
+        else:
+            print("\nInvalid choice. Try again.")
 
 
 def get_multiline_input():
@@ -242,13 +312,16 @@ def export_txt_report():
 
 def main():
     while True:
+        view_application_summary()
+
         print("\n==== Job Application Tracker ====")
         print("1. Add new application")
         print("2. View all applications")
         print("3. Search applications")
         print("4. Update application status")
         print("5. Export TXT report")
-        print("6. Exit")
+        print("6. Update untracked applied count (+ / -)")
+        print("7. Exit")
 
         choice = input("\nChoose an option: ").strip()
 
@@ -263,6 +336,8 @@ def main():
         elif choice == "5":
             export_txt_report()
         elif choice == "6":
+            update_untracked_applied_count()
+        elif choice == "7":
             print("\nGoodbye.")
             break
         else:

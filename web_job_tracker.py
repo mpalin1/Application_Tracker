@@ -6,6 +6,7 @@ from flask import Flask, request, redirect, render_template_string, url_for
 app = Flask(__name__)
 
 DATA_FILE = "job_applications.json"
+META_FILE = "job_tracker_meta.json"
 
 VALID_STATUSES = [
     "applied",
@@ -28,6 +29,53 @@ def load_jobs():
 def save_jobs(jobs):
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(jobs, file, indent=4)
+
+def load_meta():
+    if not os.path.exists(META_FILE):
+        return {"untracked_applied": 0, "untracked_denied": 0}
+
+    try:
+        with open(META_FILE, "r", encoding="utf-8") as file:
+            meta = json.load(file)
+    except json.JSONDecodeError:
+        return {"untracked_applied": 0, "untracked_denied": 0}
+
+    if "untracked_applied" not in meta:
+        meta["untracked_applied"] = 0
+
+    if "untracked_denied" not in meta:
+        meta["untracked_denied"] = 0
+
+    return meta
+
+
+def save_meta(meta):
+    with open(META_FILE, "w", encoding="utf-8") as file:
+        json.dump(meta, file, indent=4)
+
+
+def get_untracked_applied_count():
+    meta = load_meta()
+    return max(0, int(meta.get("untracked_applied", 0)))
+
+
+def change_untracked_applied_count(amount):
+    meta = load_meta()
+    current_count = max(0, int(meta.get("untracked_applied", 0)))
+    meta["untracked_applied"] = max(0, current_count + amount)
+    save_meta(meta)
+
+
+def get_untracked_denied_count():
+    meta = load_meta()
+    return max(0, int(meta.get("untracked_denied", 0)))
+
+
+def change_untracked_denied_count(amount):
+    meta = load_meta()
+    current_count = max(0, int(meta.get("untracked_denied", 0)))
+    meta["untracked_denied"] = max(0, current_count + amount)
+    save_meta(meta)
 
 
 def parse_application(text):
@@ -157,6 +205,63 @@ HTML = """
     font-size: 22px;
     box-shadow: 0 2px 8px var(--shadow);
     border: 1px solid var(--border);
+}
+
+.stats-box {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background: var(--table-header);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    min-width: 140px;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.stat-denied .stat-number {
+    color: var(--button-red);
+}
+
+.stat-counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.counter-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.counter-minus {
+    background: var(--button-red);
+}
+
+.counter-plus {
+    background: var(--button-green);
+}
+
+.counter-form {
+    margin: 0;
 }
 
     .container {
@@ -408,9 +513,52 @@ notes: Entry level role."></textarea>
         </div>
 
         <div class="card">
-            <h2>Saved Applications</h2>
+    <h2>Saved Applications</h2>
 
-            <form class="search-box" method="GET" action="/">
+    <div class="stats-box">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_applications }}</div>
+            <div class="stat-label">Total Applications</div>
+            <div class="stat-label">{{ tracked_applications }} tracked + {{ untracked_applications }} untracked</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-counter">
+                <form class="counter-form" method="POST" action="/untracked/decrease">
+                    <button class="counter-button counter-minus" type="submit">-</button>
+                </form>
+
+                <div>
+                    <div class="stat-number">{{ untracked_applications }}</div>
+                    <div class="stat-label">Untracked Applied</div>
+                </div>
+
+                <form class="counter-form" method="POST" action="/untracked/increase">
+                    <button class="counter-button counter-plus" type="submit">+</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="stat-card stat-denied">
+            <div class="stat-counter">
+                <form class="counter-form" method="POST" action="/untracked-denied/decrease">
+                    <button class="counter-button counter-minus" type="submit">-</button>
+                </form>
+
+                <div>
+                    <div class="stat-number">{{ denied_applications }}</div>
+                    <div class="stat-label">Denied</div>
+                    <div class="stat-label">{{ tracked_denied_applications }} tracked + {{ untracked_denied_applications }} untracked</div>
+                </div>
+
+                <form class="counter-form" method="POST" action="/untracked-denied/increase">
+                    <button class="counter-button counter-plus" type="submit">+</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <form class="search-box" method="GET" action="/">
                 <input type="text" name="search" placeholder="Search company or title" value="{{ search }}">
                 <button type="submit">Search</button>
                 <a href="/"><button type="button">Show All</button></a>
@@ -581,11 +729,28 @@ def home():
         else:
             job["date_group_class"] = "date-group-odd"
 
+    tracked_applications = len(jobs)
+    untracked_applications = get_untracked_applied_count()
+    total_applications = tracked_applications + untracked_applications
+
+    tracked_denied_applications = sum(
+        1 for job in jobs
+        if job.get("status", "").lower() == "denied"
+    )
+    untracked_denied_applications = get_untracked_denied_count()
+    denied_applications = tracked_denied_applications + untracked_denied_applications
+
     return render_template_string(
         HTML,
         jobs=jobs,
         statuses=VALID_STATUSES,
-        search=search
+        search=search,
+        tracked_applications=tracked_applications,
+        untracked_applications=untracked_applications,
+        total_applications=total_applications,
+        tracked_denied_applications=tracked_denied_applications,
+        untracked_denied_applications=untracked_denied_applications,
+        denied_applications=denied_applications
     )
 
 
@@ -628,6 +793,30 @@ def delete_application(index):
         save_jobs(jobs)
 
     return redirect(url_for("home"))
+
+
+@app.route("/untracked/increase", methods=["POST"])
+def increase_untracked_applied():
+    change_untracked_applied_count(1)
+    return redirect(request.referrer or url_for("home"))
+
+
+@app.route("/untracked/decrease", methods=["POST"])
+def decrease_untracked_applied():
+    change_untracked_applied_count(-1)
+    return redirect(request.referrer or url_for("home"))
+
+
+@app.route("/untracked-denied/increase", methods=["POST"])
+def increase_untracked_denied():
+    change_untracked_denied_count(1)
+    return redirect(request.referrer or url_for("home"))
+
+
+@app.route("/untracked-denied/decrease", methods=["POST"])
+def decrease_untracked_denied():
+    change_untracked_denied_count(-1)
+    return redirect(request.referrer or url_for("home"))
 
 
 @app.route("/export", methods=["POST"])
